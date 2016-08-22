@@ -1,0 +1,39 @@
+      ,log_opera_agenda_central.cd_agenda_central
+      ,log_opera_agenda_central.cd_usuario
+      ,log_opera_agenda_central.ds_motivo
+      ,log_opera_agenda_central.cd_grupo_agenda
+      ,grupo_agenda.ds_grupo_agenda
+      ,log_opera_agenda_central.cd_item_agendamento
+      ,item_agendamento.ds_item_agendamento
+      ,log_opera_agenda_central.cd_recurso_central
+      ,recurso_central.ds_recurso_central
+      ,trunc(prestador.cd_prestador)cd_prestador  /*PDA 471332 expansao do codigo do prestador de 4 para 12 digitos.*/
+      ,prestador.nm_prestador
+      ,log_opera_agenda_central.cd_setor
+      ,setor.nm_setor
+      ,log_opera_agenda_central.cd_paciente
+      ,log_opera_agenda_central.nm_paciente
+      ,log_opera_agenda_central.dt_agenda
+      ,log_opera_agenda_central.cd_it_agenda_central
+      ,log_opera_agenda_central.hr_agenda
+from dbamv.log_opera_agenda_central
+    ,dbamv.item_agendamento
+    ,dbamv.recurso_central
+    ,dbamv.prestador
+    ,dbamv.grupo_agenda
+    ,dbamv.setor
+where log_opera_agenda_central.cd_item_agendamento = item_agendamento.cd_item_agendamento(+)
+  and log_opera_agenda_central.cd_recurso_central = recurso_central.cd_recurso_central(+)
+  and log_opera_agenda_central.cd_prestador = prestador.cd_prestador(+)
+  and log_opera_agenda_central.cd_grupo_agenda = grupo_agenda.cd_grupo_agenda(+)
+  and log_opera_agenda_central.cd_setor = setor.cd_setor(+)
+  and log_opera_agenda_central.tp_operacao = 'H'
+  and log_opera_agenda_central.dt_agenda between :p_dt_inicial and :p_dt_final
+&cf_cond_cd_setor
+&cf_cond_cd_unidade
+&cf_cond_cd_prestador
+&cf_cond_cd_recurso
+order by prestador.nm_prestador
+             ,recurso_central.ds_recurso_central
+             ,trunc(log_opera_agenda_central.dt_agenda)
+             ,to_date(to_char(log_opera_agenda_central.hr_agenda,'hh24:mi'),'hh24:mi')

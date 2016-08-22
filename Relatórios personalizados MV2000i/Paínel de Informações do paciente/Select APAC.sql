@@ -1,0 +1,15 @@
+
+--Pega procedimento solicitado na APAC, a partir do atendimento
+SELECT SUBSTR(VIRD.DESC_RESPOSTA,12)
+FROM VDIC_ITEM_RESPOSTA_DOCUMENTO  VIRD
+WHERE VIRD.REGISTRO_DOCUMENTO IN(
+                                SELECT VDIC_RESPOSTA_DOCUMENTO.REGISTRO_DOCUMENTO 
+                                FROM VDIC_RESPOSTA_DOCUMENTO,
+                                     ATENDIME
+                                WHERE ATENDIME.CD_ATENDIMENTO = VDIC_RESPOSTA_DOCUMENTO.ATENDIMENTO
+                                AND ATENDIME.CD_MULTI_EMPRESA = 1
+                                AND VDIC_RESPOSTA_DOCUMENTO.DOCUMENTO_PRONTUARIO IN(89,90)
+                                AND ATENDIME.CD_ATENDIMENTO IN(3193696,3487201)
+                             )
+AND VIRD.PERGUNTA_DOCUMENTO IN(5412,5453)
+ORDER BY VIRD.PERGUNTA_DOCUMENTO

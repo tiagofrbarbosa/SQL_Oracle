@@ -1,0 +1,31 @@
+SELECT ds_item_agendamento,
+       Sum(qt_consultas)                                       Consultas_Ofertadas,
+       Sum(qt_encaixes_marcados)                               Encaixes_Marcados,
+       Sum(qt_consultas_marcadas) - Sum(qt_encaixes_marcados)  Consultas_Marcadas,
+       Sum(atendimento_realizado)                              Consultas_Atendidas,
+       Sum(NAO_AGENDADO)                                       NAO_AGENDADO
+       FROM(
+SELECT
+    exa.ds_item_agendamento,
+    (SELECT Count(*)TESTE FROM dbamv.it_agenda_central WHERE cd_agenda_central = ac.cd_agenda_central AND SN_PUBLICO = 'S' AND SN_ENCAIXE = 'N') qt_consultas,
+    Nvl(ac.qt_encaixes_marcados,0)  qt_encaixes_marcados,
+    Count(Nvl(ac.qt_marcados,0))    qt_consultas_marcadas,
+    Count(cd_atendimento)           atendimento_realizado,
+    0                               NAO_AGENDADO,
+    ac.cd_agenda_central            COD_AGENDA
+FROM
+    dbamv.item_agendamento exa,
+    dbamv.agenda_central ac,
+    dbamv.it_agenda_central itage
+WHERE
+    ac.dt_agenda BETWEEN '01-09-2014' AND '01-09-2014'
+AND ac.cd_agenda_central = itage.cd_agenda_central
+AND itage.cd_item_agendamento = exa.cd_item_agendamento
+AND ac.cd_multi_empresa = 1
+AND exa.tp_item IN('I')
+AND AC.CD_USUARIO != 'ACESSOPEP'
+AND itage.cd_it_agenda_pai IS NULL
+GROUP BY exa.ds_item_agendamento,ac.cd_agenda_central,qt_encaixes_marcados
+
+)
+GROUP BY ds_item_agendamento

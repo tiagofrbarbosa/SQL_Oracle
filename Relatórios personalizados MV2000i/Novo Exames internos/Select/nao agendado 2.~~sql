@@ -1,0 +1,52 @@
+SELECT
+        a.cd_atendimento
+FROM ATENDIME A
+WHERE A.CD_ATENDIMENTO NOT IN(
+SELECT
+    itage.CD_ATENDIMENTO
+FROM
+    dbamv.item_agendamento exa,
+    dbamv.agenda_central ac,
+    dbamv.it_agenda_central itage
+WHERE
+    ac.dt_agenda BETWEEN '08-09-2014' AND '08-09-2014'
+AND ac.cd_agenda_central = itage.cd_agenda_central(+)
+AND itage.cd_item_agendamento = exa.cd_item_agendamento
+AND ac.cd_multi_empresa = 1
+AND exa.tp_item IN('I')
+AND AC.CD_USUARIO != 'ACESSOPEP'
+AND itage.CD_ATENDIMENTO IS NOT NULL
+AND itage.SN_PUBLICO = 'S'
+)
+AND A.DT_ATENDIMENTO BETWEEN '08-09-2014' AND '08-09-2014'
+AND A.TP_ATENDIMENTO = 'E'
+AND A.CD_MULTI_EMPRESA = 1
+AND A.CD_PRESTADOR = 1829
+
+
+
+
+SELECT
+        a.cd_atendimento
+FROM ATENDIME A
+WHERE A.CD_ATENDIMENTO NOT IN(
+SELECT
+    itage.CD_ATENDIMENTO
+FROM
+    dbamv.item_agendamento exa,
+    dbamv.agenda_central ac,
+    dbamv.it_agenda_central itage
+WHERE
+    ac.dt_agenda BETWEEN '08-09-2014' AND '08-09-2014'
+AND ac.cd_agenda_central = itage.cd_agenda_central(+)
+AND itage.cd_item_agendamento = exa.cd_item_agendamento
+AND ac.cd_multi_empresa = 1
+AND exa.tp_item IN('I')
+AND AC.CD_USUARIO != 'ACESSOPEP'
+AND itage.CD_ATENDIMENTO IS NOT NULL
+AND itage.SN_PUBLICO = 'S'
+)
+AND A.DT_ATENDIMENTO BETWEEN '08-09-2014' AND '08-09-2014'
+AND A.TP_ATENDIMENTO = 'E'
+AND A.CD_MULTI_EMPRESA = 1
+AND A.CD_PRESTADOR = 1829

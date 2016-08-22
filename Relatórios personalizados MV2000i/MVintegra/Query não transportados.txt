@@ -1,0 +1,79 @@
+ SELECT 
+ to_char(i.dt_processado,'dd/mm/yyyy hh:mm:ss') PROCESSADO,
+ i.CD_IMV_AGENDAMENTO, i.cd_agendamento_integra, i.dt_agenda, i.cd_paciente_integra, i.tp_agenda,
+i.nm_paciente, tp_acao_agenda, i.* FROM MVINTEGRA.IMV_AGENDAMENTO i
+  WHERE cd_agendamento_integra like '%50879913%'
+  ORDER BY 1 asc
+
+
+    SELECT 
+ i.cd_imv_log_requisicao, to_char(i.dt_processado,'dd/mm/yyyy hh:mm:ss') PROCESSADO,
+ i.CD_IMV_AGENDAMENTO, i.cd_agendamento_integra, i.dt_agenda, i.cd_paciente_integra, i.tp_agenda,
+i.nm_paciente, tp_acao_agenda, i.* FROM MVINTEGRA.IMV_AGENDAMENTO i
+  WHERE cd_paciente_integra = 14425111
+  --AND i.cd_prestador_integra = 118779
+  AND i.DT_AGENDA = '15-08-2015'
+  ORDER BY 1 asc
+
+
+SELECT 
+ i.cd_imv_log_requisicao, i.TP_FLUXO, i.TP_STATUS, i.DS_ERRO,to_char(i.dt_gerado,'dd/mm/yyyy hh24:mi:ss') GERADO, to_char(i.dt_processado,'dd/mm/yyyy hh24:mi:ss') PROCESSADO,
+ i.CD_IMV_AGENDAMENTO, i.cd_agendamento_integra, i.dt_agenda, i.cd_paciente_integra, i.tp_agenda,
+i.nm_paciente, tp_acao_agenda, i.* FROM MVINTEGRA.IMV_AGENDAMENTO i
+  WHERE i.cd_prestador_integra = 163371
+  --AND i.cd_paciente_integra = 18462326
+  AND i.DT_AGENDA = '18-06-2016'
+  AND to_char(i.DT_PROCESSADO,'dd/mm/yyyy') = to_char(sysdate,'dd/mm/yyyy')
+  ORDER BY 6 DESC
+  
+  
+SELECT *
+FROM MVINTEGRA.IMV_AGENDAMENTO i
+WHERE i.DT_GERADO BETWEEN '13-11-2014' AND '14-11-2014'
+AND i.TP_STATUS = 'E'
+
+SELECT * FROM MVINTEGRA.IMV_LOG_REQUISICAO
+
+SELECT i.CD_IMV_AGENDAMENTO,
+       i.CD_PACIENTE_INTEGRA,
+       i.CD_AGENDAMENTO_INTEGRA,
+       i.TP_ACAO_AGENDA,
+       i.DT_GERADO,
+       l.NM_SERVICO,
+       i.DS_ERRO,
+       i.DT_AGENDA,
+       i.DS_ESPECIALIDADE,
+       i.NM_PRESTADOR,
+       i.NM_PACIENTE,
+       TO_CHAR(i.HR_INICIO_AGENDA,'HH:MM') HR_INI,
+       TO_CHAR(i.HR_FINAL_AGENDA,'HH:MM') HR_FIN
+FROM MVINTEGRA.IMV_AGENDAMENTO i,
+     MVINTEGRA.IMV_LOG_REQUISICAO l
+WHERE i.DT_GERADO BETWEEN '18-11-2014' AND '19-11-2014'
+    AND i.CD_IMV_LOG_REQUISICAO = l.CD_IMV_LOG_REQUISICAO
+    AND l.SN_SUCESSO = 'N'
+    ORDER BY 1 asc
+    
+SELECT i.CD_IMV_AGENDAMENTO,
+	   i.CD_AGENDAMENTO_INTEGRA,
+       i.TP_ACAO_AGENDA,
+       i.DT_GERADO,
+       l.NM_SERVICO,
+       i.DS_ERRO,
+       i.DT_AGENDA,
+       i.DS_ESPECIALIDADE,
+       i.NM_PRESTADOR,
+       i.NM_PACIENTE,
+       TO_CHAR(i.HR_INICIO_AGENDA,'HH:MM') HR_INI,
+       TO_CHAR(i.HR_FINAL_AGENDA,'HH:MM') HR_FIN
+FROM MVINTEGRA.IMV_AGENDAMENTO i,
+     MVINTEGRA.IMV_LOG_REQUISICAO l
+WHERE i.CD_AGENDAMENTO_INTEGRA IN(
+        SELECT i.CD_AGENDAMENTO_INTEGRA
+        FROM MVINTEGRA.IMV_AGENDAMENTO i,
+             MVINTEGRA.IMV_LOG_REQUISICAO l
+        WHERE i.DT_GERADO BETWEEN '12-11-2014' AND '14-11-2014'
+        AND i.CD_IMV_LOG_REQUISICAO = l.CD_IMV_LOG_REQUISICAO
+        AND l.SN_SUCESSO = 'N')
+        AND i.CD_IMV_LOG_REQUISICAO = l.CD_IMV_LOG_REQUISICAO
+        ORDER BY i.CD_AGENDAMENTO_INTEGRA

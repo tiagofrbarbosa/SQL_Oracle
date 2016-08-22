@@ -1,0 +1,33 @@
+    SELECT * FROM(
+    SELECT 
+ i.cd_imv_log_requisicao,
+ to_char(i.dt_processado,'dd/mm/yyyy hh24:mi:ss') PROCESSADO,
+ i.CD_IMV_AGENDAMENTO, 
+ i.dt_agenda,
+ to_char(i.HR_INICIO_AGENDA,'HH24:MI'),
+ i.nm_prestador,
+ i.cd_paciente_integra, 
+ i.tp_agenda,
+i.nm_paciente,
+--(SELECT DISTINCT(IT.NM_PACIENTE) FROM IT_AGENDA_CENTRAL IT WHERE IT.NM_PACIENTE = i.NM_PACIENTE AND RPAD(IT.CD_IT_AGENDA_CENTRAL_INTEGRA,8) = i.cd_agendamento_integra) integrado,
+(SELECT DISTINCT(IT.NM_PACIENTE) FROM IT_AGENDA_CENTRAL IT, AGENDA_CENTRAL AC WHERE IT.NM_PACIENTE = TRANSLATE(i.NM_PACIENTE,'ÇÃÉÕÔ','CAEOO') AND IT.CD_AGENDA_CENTRAL = AC.CD_AGENDA_CENTRAL AND AC.DT_AGENDA = to_char(i.dt_agenda,'dd/mm/yyyy')) integrado,
+i.tp_acao_agenda,
+l.SN_SUCESSO,
+l.DS_ERRO,
+i.cd_agendamento_integra, i.CD_AGENDAMENTO_ORIGEM_INTEGRA, i.CD_AGENDAMENTO_ORIGEM
+FROM MVINTEGRA.IMV_AGENDAMENTO i,
+     MVINTEGRA.IMV_LOG_REQUISICAO l
+  WHERE 
+  --i.cd_prestador_integra NOT IN(163371)
+  --AND i.cd_prestador_integra = 118779
+  --to_char(i.DT_PROCESSADO,'dd/mm/yyyy') = to_char(sysdate,'dd/mm/yyyy')
+  --AND i.DT_AGENDA = '18-06-2016'
+  i.DT_PROCESSADO BETWEEN '01-01-2015' AND '07-07-2016'
+  AND i.DT_AGENDA > to_char(sysdate,'dd/mm/yyyy')
+  AND i.CD_IMV_LOG_REQUISICAO IS NOT NULL
+  AND i.CD_IMV_LOG_REQUISICAO = l.CD_IMV_LOG_REQUISICAO
+  AND l.SN_SUCESSO = 'N'
+  ORDER BY 1 asc)
+  WHERE integrado IS NULL
+  AND TP_ACAO_AGENDA IN('T','A')
+  order by DT_AGENDA ASC

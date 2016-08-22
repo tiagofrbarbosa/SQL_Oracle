@@ -1,0 +1,10 @@
+MVINTEGRA.PRC_IMVW_ENT_AGENDA_SCMA_CROSS
+
+
+   Cursor c_servico_especialidade( pCdEspecialid Number, pCdEspecialidIntegra Varchar2, pCdMultiEmpresa Number, pSistemaOrigem Varchar2 ) is
+      select ser_dis.*
+        from dbamv.especialid
+            ,dbamv.ser_dis
+       where ser_dis.cd_especialid    = especialid.cd_especialid
+         and especialid.cd_especialid = nvl( mvintegra.fnc_imv_retorna_depara( 'ESPECIALIDADE', pCdMultiEmpresa, pSistemaOrigem, NULL, pCdEspecialidIntegra ), pCdEspecialid )
+         and ser_dis.cd_ser_dis       = nvl( mvintegra.fnc_imv_retorna_depara( 'SERVICO_ESPECIALIDADE', pCdMultiEmpresa, pSistemaOrigem, NULL, pCdEspecialidIntegra ), ser_dis.cd_ser_dis );

@@ -1,0 +1,60 @@
+
+SELECT      prestador
+		   , Data_ate
+           , servico
+           ,item_agendamento
+	   , tipo_atendimento
+	   , consultas_ofertadas
+	   , Encaixes_Marcados
+	   , Consultas_Marcadas
+	   , Encaixes_Marcados + Consultas_Marcadas total_agendado
+	   , Consultas_Atendidas
+	   , (Encaixes_Marcados + Consultas_Marcadas -  Consultas_Atendidas) nao_atendido
+  FROM (
+                SELECT nm_prestador                                                 prestador,
+                       data_atend								Data_ate,
+					   ds_ser_dis                                                   Servico, 
+             ds_item_agendamento     item_agendamento,
+                       ds_tip_mar                                                   Tipo_Atendimento,
+                       Sum(qt_consultas)                                            Consultas_Ofertadas, 
+                       Sum(qt_encaixes_marcados)                         	        Encaixes_Marcados, 
+                       Sum(qt_consultas_marcadas) - Sum(qt_encaixes_marcados)       Consultas_Marcadas, 
+                       Sum(atendimento_realizado) 	                                Consultas_Atendidas
+                  
+                FROM (
+                    SELECT 
+                        p.NM_PRESTADOR,
+                        TO_DATE(ac.dt_agenda,'DD/MM/YYYY') data_atend,
+						ser.ds_ser_dis,
+            item.ds_item_agendamento,
+						mar.ds_tip_mar,
+                        Nvl(ac.qt_atendimento,0)       qt_consultas,
+                        Nvl(ac.qt_encaixes_marcados,0) qt_encaixes_marcados,
+                        count(Nvl(ac.qt_marcados,0))   qt_consultas_marcadas,
+                        count(cd_atendimento)          atendimento_realizado,
+                        0                              NAO_AGENDADO
+                    FROM 
+                        dbamv.agenda_central ac,
+                        dbamv.it_agenda_central it,
+                        dbamv.tip_mar mar,
+                        dbamv.ser_dis ser,
+                        dbamv.prestador p,
+                        dbamv.item_agendamento item
+                    WHERE 
+						  ac.dt_agenda Between '01-01-2015' AND '24-02-2015'
+						--To_Date(ac.dt_agenda,'DD/MM/YYYY') BETWEEN To_Date(:DT_INICIAL,'DD/MM/YYYY') AND To_Date(:DT_FINAL,'DD/MM/YYYY')
+                                                                                                 --AND p.nm_prestador    LIKE Decode(:NR_PRESTADOR,'TODOS','%',:NR_PRESTADOR)
+                                                                                                 AND p.cd_prestador IN(110,1568)
+                    AND ac.cd_agenda_central = it.cd_agenda_central
+                    AND it.cd_tip_mar        = mar.cd_tip_mar
+                    AND ac.cd_multi_empresa  = 1
+                    AND it.cd_ser_dis        = ser.cd_ser_dis
+                    AND ac.CD_PRESTADOR = p.CD_PRESTADOR
+                    AND IT.cd_it_agenda_pai IS NULL
+                    AND item.cd_item_agendamento = it.cd_item_agendamento
+                    GROUP BY p.NM_PRESTADOR,ac.dt_agenda,ser.ds_ser_dis, item.DS_ITEM_AGENDAMENTO, ac.dt_agenda, mar.ds_tip_mar, qt_atendimento, qt_encaixes_marcados, qt_marcados
+    
+)
+GROUP BY nm_prestador,data_atend,ds_ser_dis,ds_item_agendamento, ds_tip_mar
+)
+order by 1,2,3,4,5 asc

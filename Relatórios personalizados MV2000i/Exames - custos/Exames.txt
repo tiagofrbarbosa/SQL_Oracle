@@ -1,0 +1,35 @@
+SELECT nm_set_exa,
+       SUM(qt_atendimento) ofertadas,
+       SUM(qt_marcados) consultas_marcadas,
+       SUM(qt_encaixes_marcados) encaixes_marcados,
+       SUM(qt_marcados) + SUM(qt_encaixes_marcados) total_agendado,
+       SUM(atendimento_realizado) atendidos,
+       SUM(qt_marcados) + SUM(qt_encaixes_marcados) - SUM(atendimento_realizado) absenteísmo
+       FROM(
+SELECT s.NM_SET_EXA,
+       ac.qt_atendimento,
+       NVL(ac.qt_marcados,0) qt_marcados,
+       NVL(ac.qt_encaixes_marcados,0) qt_encaixes_marcados,
+       COUNT(itage.cd_atendimento) atendimento_realizado
+FROM
+  dbamv.agenda_central ac,
+  dbamv.item_agendamento it,
+  dbamv.it_agenda_central itage,
+  dbamv.atendime a,
+  dbamv.set_exa s,
+  dbamv.ped_rx p
+WHERE ac.cd_agenda_central = itage.cd_agenda_central(+)
+      AND A.CD_ATENDIMENTO = ITAGE.CD_ATENDIMENTO
+      AND A.CD_ATENDIMENTO = P.CD_ATENDIMENTO
+      AND S.CD_SET_EXA = P.CD_SET_EXA
+      AND itage.cd_item_agendamento = it.cd_item_agendamento
+      AND ac.DT_AGENDA between '20-12-2013' AND '20-12-2013'
+      --AND TO_DATE(ac.dt_agenda,'DD/MM/YYYY') BETWEEN TO_DATE(:DT_INICIAL,'DD/MM/YYYY') AND TO_DATE(:DT_FINAL,'DD/MM/YYYY')
+      --AND it.ds_item_agendamento LIKE Decode(Trim(:DS_EXAME),'TODOS','%',Trim(:DS_EXAME))
+      --AND it.tp_item IN('I')
+      --AND it.sn_ativo IN('S')
+      AND ac.cd_usuario != 'ACESSOPEP'
+      AND AC.CD_MULTI_EMPRESA = 1
+      --AND a.cd_ori_ate = 14
+      GROUP BY s.NM_SET_EXA,ac.qt_atendimento,ac.qt_marcados,ac.qt_encaixes_marcados)
+      GROUP BY nm_set_exa;

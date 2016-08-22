@@ -1,0 +1,4 @@
+SELECT 
+   TO_CHAR(TRUNC((103 * 60) / 3600), 'FM9900') || ':' ||
+   TO_CHAR(TRUNC(MOD((103 * 60), 3600) / 60), 'FM00') || ':' ||
+   TO_CHAR(MOD((103 * 60), 60), 'FM00') AS MIN_TO_HOUR FROM DUAL
