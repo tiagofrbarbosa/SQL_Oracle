@@ -1,4 +1,0 @@
-SELECT i.CD_IMV_AGENDAMENTO, i.cd_agendamento_integra, i.dt_agenda, i.cd_paciente_integra, i.tp_agenda,
-i.nm_paciente, tp_acao_agenda, i.* FROM MVINTEGRA.IMV_AGENDAMENTO i
-	WHERE cd_agendamento_integra like '%52526336%'
-	ORDER BY 1 asc 

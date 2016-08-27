@@ -1,9 +1,0 @@
-SELECT p.cd_produto, p.ds_produto, ep.qt_estoque_atual,e.ds_especie, to_char(ep.DT_ULTIMA_MOVIMENTACAO,'DD/MM/YYYY') Movimento
-FROM est_pro ep,
-     produto p,
-     especie e
-WHERE ep.cd_produto = p.cd_produto
-      AND p.cd_especie = e.cd_especie
-AND CD_ESTOQUE in(3,4)
---AND ep.qt_estoque_atual > 0
-ORDER BY p.cd_produto
